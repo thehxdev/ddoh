@@ -1,0 +1,6 @@
+{
+    "local_resolver": "9.9.9.9",
+    "doh_server": "https://max.rethinkdns.com/rec",
+    "doh_ip": "137.66.7.89",
+    "udp_buffer_size": 256
+}
