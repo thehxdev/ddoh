@@ -12,6 +12,10 @@ import (
 	"github.com/thehxdev/ddoh/server"
 )
 
+const (
+	VERSION = "1.0.0"
+)
+
 var (
 	confPath string
 )
