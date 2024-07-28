@@ -40,13 +40,13 @@ func (s *Server) Start() {
 	log.Printf("starting server on %s\n", net.JoinHostPort(addr.IP.String(), strconv.Itoa(addr.Port)))
 
 	for running {
-		buff := make([]byte, config.Global.UDPBuffSize)
-		_, addr, err := s.Conn.ReadFrom(buff)
+		buff := make([]byte, 0, config.Global.UDPBuffSize)
+		_, addr, err := s.Conn.ReadFrom(buff[:cap(buff)])
 		if err != nil {
 			log.Println(err)
 			break
 		}
-		go s.Resolver.Resolve(s.Conn, addr, buff)
+		go s.Resolver.Resolve(s.Conn, addr, buff[:cap(buff)])
 	}
 }
 
