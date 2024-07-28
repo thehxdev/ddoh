@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"bytes"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -29,8 +30,7 @@ func (r *Resolver) Resolve(conn *net.UDPConn, addr net.Addr, buff []byte) {
 	qName := reqPacket.Questions[0].Name
 
 	log.Printf("new query -> %s\n", string(qName))
-	bodyBuff := bytesToBuffer(buff)
-	req, err := newHttpRequest(bodyBuff)
+	req, err := newHttpRequest(bytes.NewReader(buff))
 	if err != nil {
 		log.Println(err)
 		return
@@ -48,14 +48,13 @@ func (r *Resolver) Resolve(conn *net.UDPConn, addr net.Addr, buff []byte) {
 		return
 	}
 
-	bodyBuff.Reset()
-	_, err = bodyBuff.ReadFrom(resp.Body)
-	if err != nil {
+	n, err := resp.Body.Read(buff)
+	if err != nil && err != io.EOF {
 		log.Println(err)
 		return
 	}
 
-	conn.WriteTo(bodyBuff.Bytes(), addr)
+	conn.WriteTo(buff[:n], addr)
 }
 
 func bytesToDNSPacket(body []byte) (*layers.DNS, error) {
