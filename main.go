@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	VERSION = "1.0.1"
+	VERSION = "1.0.2"
 )
 
 var (
-	confPath string
+	confPath    string
 	showVersion bool
 )
 
@@ -31,7 +31,7 @@ func main() {
 	configureCmdFlags()
 
 	if showVersion {
-		fmt.Println("ddoh v"+VERSION+"\nhttps://github.com/thehxdev/ddoh")
+		fmt.Println("ddoh v" + VERSION + "\nhttps://github.com/thehxdev/ddoh")
 		os.Exit(0)
 	}
 
