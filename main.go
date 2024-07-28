@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -13,11 +14,12 @@ import (
 )
 
 const (
-	VERSION = "1.0.0"
+	VERSION = "1.0.1"
 )
 
 var (
 	confPath string
+	showVersion bool
 )
 
 func main() {
@@ -27,6 +29,11 @@ func main() {
 	}
 
 	configureCmdFlags()
+
+	if showVersion {
+		fmt.Println("ddoh v"+VERSION+"\nhttps://github.com/thehxdev/ddoh")
+		os.Exit(0)
+	}
 
 	config.InitConfig(confPath)
 	server := server.Init()
@@ -48,5 +55,6 @@ func main() {
 
 func configureCmdFlags() {
 	flag.StringVar(&confPath, "c", "config.json", "path to config.json file")
+	flag.BoolVar(&showVersion, "v", false, "show version info")
 	flag.Parse()
 }
