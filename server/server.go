@@ -10,9 +10,10 @@ import (
 )
 
 type Server struct {
-	Conn     *net.UDPConn
-	Addr     *net.UDPAddr
-	Resolver *resolver.Resolver
+	bufPool
+	*resolver.Resolver
+	Conn *net.UDPConn
+	Addr *net.UDPAddr
 }
 
 var (
@@ -26,6 +27,7 @@ func Init() *Server {
 			Port: 53,
 		},
 		Resolver: resolver.Init(),
+		bufPool:  newPool(config.Global.UDPBuffSize),
 	}
 	conn, err := net.ListenUDP("udp", s.Addr)
 	if err != nil {
@@ -40,13 +42,16 @@ func (s *Server) Start() {
 	log.Printf("starting server on %s\n", net.JoinHostPort(addr.IP.String(), strconv.Itoa(addr.Port)))
 
 	for running {
-		buff := make([]byte, 0, config.Global.UDPBuffSize)
+		buff := s.bufPool.Get()
 		_, addr, err := s.Conn.ReadFrom(buff[:cap(buff)])
 		if err != nil {
 			log.Println(err)
 			break
 		}
-		go s.Resolver.Resolve(s.Conn, addr, buff[:cap(buff)])
+		go func(buff []byte) {
+			defer s.bufPool.Put(buff)
+			s.Resolver.Resolve(s.Conn, addr, buff[:cap(buff)])
+		}(buff)
 	}
 }
 

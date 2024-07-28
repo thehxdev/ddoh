@@ -10,7 +10,7 @@ type Config struct {
 	LocalResolver string `json:"local_resolver"`
 	DoHServer     string `json:"doh_server"`
 	DoHIP         string `json:"doh_ip"`
-	UDPBuffSize   uint   `json:"udp_buffer_size"`
+	UDPBuffSize   int    `json:"udp_buffer_size"`
 }
 
 var (

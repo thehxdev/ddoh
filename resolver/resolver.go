@@ -15,7 +15,7 @@ import (
 )
 
 type Resolver struct {
-	Client *http.Client
+	*http.Client
 }
 
 func Init() *Resolver {
