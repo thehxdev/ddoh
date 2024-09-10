@@ -12,6 +12,8 @@ import (
 	"github.com/thehxdev/ddoh/config"
 )
 
+const DNS_MESSAGE_HEADER = "application/dns-message"
+
 func initHttpClient() *http.Client {
 	dialer := &net.Dialer{
 		// Lookup timeout
@@ -25,7 +27,8 @@ func initHttpClient() *http.Client {
 	}
 	net.DefaultResolver = dialer.Resolver
 
-	var ip string
+	var ip string = config.Global.DoHIP
+	var port string = "443"
 	if len(config.Global.DoHIP) == 0 {
 		u, err := url.Parse(config.Global.DoHServer)
 		if err != nil {
@@ -38,8 +41,10 @@ func initHttpClient() *http.Client {
 		}
 
 		ip = dohIPs[0]
-	} else {
-		ip = config.Global.DoHIP
+
+		if p := u.Port(); p != "" {
+			port = p
+		}
 	}
 
 	return &http.Client{
@@ -50,7 +55,7 @@ func initHttpClient() *http.Client {
 				// since we send requests to a constant URL, it's better to
 				// resolve the host to it's IP addresses and use the IP address
 				// directly.
-				addr = net.JoinHostPort(ip, "443")
+				addr = net.JoinHostPort(ip, port)
 				return dialer.DialContext(ctx, network, addr)
 			},
 		},
@@ -62,7 +67,7 @@ func newHttpRequest(body *bytes.Reader) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/dns-message")
-	req.Header.Set("Accept", "application/dns-message")
+	req.Header.Set("Content-Type", DNS_MESSAGE_HEADER)
+	req.Header.Set("Accept", DNS_MESSAGE_HEADER)
 	return req, nil
 }
