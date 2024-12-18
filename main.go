@@ -56,7 +56,7 @@ func main() {
 		stat := &runtime.MemStats{}
 		for {
 			runtime.ReadMemStats(stat)
-			log.Printf("Heap Allocations: %d KB", stat.HeapAlloc / 1024)
+			log.Printf("Heap Allocations: %d KB", stat.HeapAlloc/1024)
 			time.Sleep(time.Second * 5)
 		}
 	}()
