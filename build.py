@@ -36,7 +36,7 @@ def build(arch: str, osname: str) -> None:
         envVars += " CGO_ENABLED=1"
         outName += ".exe"
 
-    system(f"{envVars} {GO} build -ldflags='-s -buildid=' -o 'build/{outName}' .")
+    system(f"{envVars} {GO} build -ldflags='-s -w -buildid=' -o 'build/{outName}' .")
 
 
 def main() -> None:
