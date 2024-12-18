@@ -62,7 +62,7 @@ func initHttpClient() *http.Client {
 	}
 }
 
-func newHttpRequest(ctx context.Context, body *bytes.Reader) (*http.Request, error) {
+func newDohPostRequest(ctx context.Context, body *bytes.Reader) (*http.Request, error) {
 	req, err := http.NewRequestWithContext(ctx, "POST", config.Global.DoHServer, body)
 	if err != nil {
 		return nil, err
