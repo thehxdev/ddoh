@@ -13,6 +13,7 @@ if not sys.version_info >= (3, 8):
     log.error("this script requires python 3.8 or above")
     sys.exit(1)
 
+BUILD_DIR = "build"
 BIN  = "ddoh"
 GO   = "go"
 
@@ -35,12 +36,16 @@ def build(arch: str, osname: str) -> None:
     if osname == "windows":
         envVars += " CGO_ENABLED=1"
         outName += ".exe"
+    elif osname == "linux":
+        envVars += " CGO_ENABLED=0"
 
     system(f"{envVars} {GO} build -ldflags='-s -w -buildid=' -o 'build/{outName}' .")
 
 
 def main() -> None:
-    os.makedirs("build")
+    if not os.path.exists(BUILD_DIR):
+        os.makedirs(BUILD_DIR)
+
     for osName in OS:
         for arch in ARCH:
             if osName == "android" and arch != "arm64":
