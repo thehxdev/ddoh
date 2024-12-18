@@ -7,9 +7,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
 )
 
 type Resolver struct {
@@ -46,13 +43,4 @@ func (r *Resolver) Resolve(ctx context.Context, conn *net.UDPConn, addr net.Addr
 
 	conn.WriteTo(buff[:n], addr)
 	return nil
-}
-
-func dnsPacketToBytes(dns *layers.DNS) []byte {
-	buff := gopacket.NewSerializeBuffer()
-	err := dns.SerializeTo(buff, gopacket.SerializeOptions{FixLengths: true, ComputeChecksums: false})
-	if err != nil {
-		return nil
-	}
-	return buff.Bytes()
 }
