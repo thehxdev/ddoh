@@ -31,7 +31,7 @@ func main() {
 	configureCmdFlags()
 
 	if showVersion {
-		fmt.Println("ddoh v" + VERSION + "\nhttps://github.com/thehxdev/ddoh")
+		fmt.Printf("ddoh v%s\nhttps://github.com/thehxdev/ddoh", VERSION)
 		os.Exit(0)
 	}
 
@@ -41,6 +41,7 @@ func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT)
 	serverCtx, serverCtxStop := context.WithCancel(context.Background())
+	server.Ctx = serverCtx
 
 	go func() {
 		<-sigChan

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"log"
 	"net"
 	"strconv"
@@ -14,11 +15,12 @@ type Server struct {
 	*resolver.Resolver
 	Conn *net.UDPConn
 	Addr *net.UDPAddr
+	Ctx context.Context
 }
 
-var (
-	running bool = true
-)
+// var (
+// 	running bool = true
+// )
 
 func Init() *Server {
 	s := &Server{
@@ -41,21 +43,23 @@ func (s *Server) Start() {
 	addr := s.Addr
 	log.Printf("starting server on %s\n", net.JoinHostPort(addr.IP.String(), strconv.Itoa(addr.Port)))
 
-	for running {
+	for {
 		buff := s.bufPool.Get()
-		_, addr, err := s.Conn.ReadFrom(buff[:cap(buff)])
+		_, addr, err := s.Conn.ReadFromUDP(buff[:cap(buff)])
 		if err != nil {
 			log.Println(err)
 			break
 		}
 		go func(buff []byte) {
-			defer s.bufPool.Put(buff)
-			s.Resolver.Resolve(s.Conn, addr, buff[:cap(buff)])
+			if err := s.Resolver.Resolve(s.Ctx, s.Conn, addr, buff[:cap(buff)]); err != nil {
+				log.Println(err)
+			}
+			s.bufPool.Put(buff)
 		}(buff)
 	}
 }
 
 func (s *Server) Shutdown() {
-	running = false
+	// running = false
 	s.Conn.Close()
 }
