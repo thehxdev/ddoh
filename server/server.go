@@ -39,7 +39,7 @@ func Init() *Server {
 	return s
 }
 
-func (s *Server) Start() {
+func (s *Server) Start() error {
 	addr := s.Addr
 	log.Printf("starting server on %s\n", net.JoinHostPort(addr.IP.String(), strconv.Itoa(addr.Port)))
 
@@ -47,10 +47,10 @@ func (s *Server) Start() {
 		buff := s.bufPool.Get()
 		_, addr, err := s.Conn.ReadFromUDP(buff[:cap(buff)])
 		if err != nil {
-			log.Println(err)
-			break
+			return err
 		}
 		go func(buff []byte) {
+			log.Printf("new query from %s\n", addr.String())
 			if err := s.Resolver.Resolve(s.Ctx, s.Conn, addr, buff[:cap(buff)]); err != nil {
 				log.Println(err)
 			}

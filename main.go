@@ -7,7 +7,9 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
+	"time"
 
 	"github.com/thehxdev/ddoh/config"
 	"github.com/thehxdev/ddoh/server"
@@ -50,7 +52,19 @@ func main() {
 		serverCtxStop()
 	}()
 
-	server.Start()
+	go func() {
+		stat := &runtime.MemStats{}
+		for {
+			runtime.ReadMemStats(stat)
+			log.Printf("Heap Allocations: %d KB", stat.HeapAlloc / 1024)
+			time.Sleep(time.Second * 5)
+		}
+	}()
+
+	go func() {
+		server.Start()
+	}()
+
 	<-serverCtx.Done()
 }
 
