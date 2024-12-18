@@ -15,7 +15,7 @@ type Server struct {
 	*resolver.Resolver
 	Conn *net.UDPConn
 	Addr *net.UDPAddr
-	Ctx context.Context
+	Ctx  context.Context
 }
 
 // var (
