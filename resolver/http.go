@@ -27,24 +27,23 @@ func initHttpClient() *http.Client {
 	}
 	net.DefaultResolver = dialer.Resolver
 
-	var ip string = config.Global.DoHIP
-	var port string = "443"
-	if len(config.Global.DoHIP) == 0 {
-		u, err := url.Parse(config.Global.DoHServer)
-		if err != nil {
-			log.Fatal(err)
-		}
+	u, err := url.Parse(config.Global.DoHServer)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	port := "443"
+	if p := u.Port(); p != "" {
+		port = p
+	}
+
+	ip := config.Global.DoHIP
+	if len(config.Global.DoHIP) == 0 {
 		dohIPs, err := net.LookupHost(u.Hostname())
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		ip = dohIPs[0]
-
-		if p := u.Port(); p != "" {
-			port = p
-		}
 	}
 
 	return &http.Client{
