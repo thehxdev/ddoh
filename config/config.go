@@ -11,6 +11,7 @@ type Config struct {
 	DoHServer     string `json:"doh_server"`
 	DoHIP         string `json:"doh_ip"`
 	UDPBuffSize   int    `json:"udp_buffer_size"`
+	Verbose       bool   `json:"verbose"`
 }
 
 var (
@@ -24,6 +25,7 @@ func InitConfig(path string) {
 		DoHServer:     "https://max.rethinkdns.com/dns-query",
 		DoHIP:         "137.66.7.89",
 		UDPBuffSize:   512,
+		Verbose:       false,
 	}
 
 	data, err := os.ReadFile(path)

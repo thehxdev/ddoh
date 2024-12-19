@@ -18,10 +18,6 @@ type Server struct {
 	Ctx  context.Context
 }
 
-// var (
-// 	running bool = true
-// )
-
 func Init() *Server {
 	s := &Server{
 		Addr: &net.UDPAddr{
@@ -50,7 +46,9 @@ func (s *Server) Start() error {
 			return err
 		}
 		go func(buff []byte) {
-			log.Printf("new query from %s\n", addr.String())
+			if config.Global.Verbose {
+				log.Printf("new query from %s\n", addr.String())
+			}
 			if err := s.Resolver.Resolve(s.Ctx, s.Conn, addr, buff[:cap(buff)]); err != nil {
 				log.Println(err)
 			}
@@ -60,6 +58,5 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Shutdown() {
-	// running = false
 	s.Conn.Close()
 }
