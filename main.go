@@ -33,7 +33,7 @@ func main() {
 	configureCmdFlags()
 
 	if showVersion {
-		fmt.Printf("ddoh v%s\nhttps://github.com/thehxdev/ddoh", VERSION)
+		fmt.Printf("ddoh v%s\nhttps://github.com/thehxdev/ddoh\n", VERSION)
 		os.Exit(0)
 	}
 
