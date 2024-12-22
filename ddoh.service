@@ -1,0 +1,10 @@
+[Unit]
+Description=Simple DoH client
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+ExecStart=/usr/local/bin/ddoh -c /etc/ddoh/config.json
+ExecStop=/bin/kill -9 $MAINPID
+
+[Install]
+WantedBy=multi-user.target
